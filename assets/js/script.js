@@ -2,37 +2,58 @@
 var historyList = document.querySelector("#search-history");
 var searchHistory = [];
 const API_KEY = "cb6420d0d0462b86d556422b020e86b4";
+var tasks = {};
+var saveTasks = function() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
+var loadTasks = function() {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    
+    if (!tasks) {
+        tasks = {};
+    }
 
+    if(tasks) {
+        $(".description").each(function( index ) {
+            if(tasks[index]) {
+                $( this ).text(tasks[index]);
+            }
+        });
+    }
+};
 
-var saveHistory = function (){
+var saveHistory = function (userCity){
+  if(searchHistory.includes(userCity)) {
+    var ind = searchHistory.indexOf(userCity);
+    searchHistory.splice(ind,1);
+  }
+  searchHistory.unshift(userCity);
   localStorage.setItem("cities", JSON.stringify(searchHistory));
 };
 
 
 var loadHistory = function () {
   
-  const savedHistory = JSON.parse(localStorage.getItem("cities"));
+  var savedHistory = JSON.parse(localStorage.getItem("cities"));
   if(!savedHistory) {
     savedHistory=[];
-    return savedHistory;
   }
   else {
-    return savedHistory;
+    printHistory(savedHistory);
   }
 
-    
 };
 
-var printHistory = function() {
-  var history = loadHistory();
-  
-  for(var i =0; i < history.length; i++) {
-    $("#search-history").append("<div class='search-history-item border-bottom border-gray' data-city='"+ 
-                                      history[i] +"'>"+ 
-                                      history[i] + 
-                                      "</div>");    
-  }
+var printHistory = function(userHistory) {
+  var history = userHistory;
+  console.log(history);  
+  // for(var i =0; i < history.length; i++) {
+  //   $("#search-history").append("<div class='search-history-item border-bottom border-gray' data-city='"+ 
+  //                                     history[i] +"'>"+ 
+  //                                     history[i] + 
+  //                                     "</div>");    
+  // }
 }
 var getDate = function(userCityTime, offset) {
   var result;
@@ -153,8 +174,8 @@ $("form").submit(function ( event ) {
   var userCity = $( "input" ).first().val();
   if (userCity) {
     searchHistory.push(userCity);
-    saveHistory();
-    printHistory();
+    saveHistory(userCity);
+    loadHistory();
     getUserCity(userCity);
 
   } else {
@@ -168,8 +189,8 @@ $("#search-history").on("click", function(event){
 
   searchHistory.push(userCity);
   getUserCity(userCity);
-  saveHistory();
-  printHistory();
+  saveHistory(userCity);
+  loadHistory();
 });
 
-printHistory();
+loadHistory();
