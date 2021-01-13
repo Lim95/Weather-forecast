@@ -3,25 +3,7 @@ var historyList = document.querySelector("#search-history");
 var searchHistory = [];
 const API_KEY = "cb6420d0d0462b86d556422b020e86b4";
 var tasks = {};
-var saveTasks = function() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-};
 
-var loadTasks = function() {
-    tasks = JSON.parse(localStorage.getItem("tasks"));
-    
-    if (!tasks) {
-        tasks = {};
-    }
-
-    if(tasks) {
-        $(".description").each(function( index ) {
-            if(tasks[index]) {
-                $( this ).text(tasks[index]);
-            }
-        });
-    }
-};
 
 var saveHistory = function (userCity){
   if(searchHistory.includes(userCity)) {
