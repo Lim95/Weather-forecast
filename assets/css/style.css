@@ -1,0 +1,76 @@
+:root {
+  --primary: #ccdad1;
+  --secondary: #9caea9;
+  --tertiary: #788585;
+  --light-dark: #6f6866;
+  --dark: #38302e;
+  --border-radius: .3rem;
+}
+*{
+  margin: 0;
+  padding: 0;  
+  background-color: white;
+  color: black;
+}
+.weather-title-header {
+    font-size:xx-large;
+    text-align: center;
+    padding: 5px 0;
+
+}
+.current-header {
+    display:inline-block;
+}
+
+.form-input {
+  width: 70%;
+  padding: 2%;
+  font-size: 1.2rem;
+  border: 2px solid black;
+  border-radius: var(--border-radius);
+}
+.form-label {
+    font-size: 30px;
+    font-weight: bold;
+    display: block;
+}
+.search-search {
+    font-size: 20px;
+}
+
+.search-history-item {
+    padding: 10px 0 10px 15px;
+}
+.btn {
+    background-color: blue;
+    padding: 3%;
+    border: 3px solid skyblue;
+    margin-bottom: 6px;
+}
+.oi {
+    background-color: blue;
+}
+.oi-magnifying-glass {
+    color: white;
+}
+.side {
+    background-color:lightgray;
+}
+.current {
+    border: 1px solid lightslategray;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.forecast-5day {
+    background-color: blue;
+  border-radius: var(--border-radius);
+}
+.future-p {
+    background-color: blue;
+    color: white
+}
+.future-date {
+    font-weight: bold;
+    font-size: x-large;
+}
