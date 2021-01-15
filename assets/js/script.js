@@ -1,11 +1,9 @@
-
 var historyList = document.querySelector("#search-history");
 var searchHistory = [];
 const API_KEY = "cb6420d0d0462b86d556422b020e86b4";
-var tasks = {};
+var counterID = 0;
 
-
-var saveHistory = function (userCity){
+var saveHistory = function (userCity) {
   if(searchHistory.includes(userCity)) {
     var ind = searchHistory.indexOf(userCity);
     searchHistory.splice(ind,1);
@@ -14,36 +12,48 @@ var saveHistory = function (userCity){
   localStorage.setItem("cities", JSON.stringify(searchHistory));
 };
 
-
-var loadHistory = function () {
-  
+var loadHistory = function() {
   var savedHistory = JSON.parse(localStorage.getItem("cities"));
+
   if(!savedHistory) {
-    savedHistory=[];
+    return false;
   }
   else {
-    printHistory(savedHistory);
+    searchHistory = savedHistory;
+    $("#search-history").empty();
   }
 
+
+  for (var i = 0; i< savedHistory.length; i++) {
+    printHistory(savedHistory[i]);
+  }
 };
+
 
 var printHistory = function(userHistory) {
   var history = userHistory;
-  console.log(history);  
-  // for(var i =0; i < history.length; i++) {
-  //   $("#search-history").append("<div class='search-history-item border-bottom border-gray' data-city='"+ 
-  //                                     history[i] +"'>"+ 
-  //                                     history[i] + 
-  //                                     "</div>");    
+  // while($("#search-history").firstChild) {
+  //   $("#search-history").removeChild($("#search-history").firstChild);
   // }
+  console.log(history);
+  if(history){
+
+    $("#search-history").append("<div class='search-history-item border-bottom border-gray' data-city='"+ 
+                                      history +"'>"+ 
+                                      history + 
+                                      "</div>");    
+  }
+  
+
 }
+
 var getDate = function(userCityTime, offset) {
   var result;
   var utcMoment = moment.utc();
   result = utcMoment.add(userCityTime, "s").add(offset,"d").format("M/D/YYYY");
   return result;
 };
-//favorable, moderate, or severe
+
 var displayUV = function (lat, lon) {
   var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + API_KEY;
   fetch(apiUrl)
@@ -65,13 +75,12 @@ var displayUV = function (lat, lon) {
           }
         });
       } else {
-        alert("Error: " + response.statusText);
+        alert("UV Error: " + response.statusText);
       }
     })
     .catch(function(error) {
-      alert("Unable to connect to openWeather");
-    });
-    
+      alert("Unable to connect to UV openWeather");
+    });    
 };
 
 var displayIcon = function(iconID){
@@ -96,7 +105,6 @@ var displayWeather = function(data) {
   displayUV(data.coord.lat,data.coord.lon);
 };
 
-
 var displayFuture = function (data) {
   $("#forecast").empty();
   for (var i = 7; i <= data.list.length; i+=8) {
@@ -114,6 +122,7 @@ var displayFuture = function (data) {
     
   }
 };
+
 var getUserCity = function(city) {
   // format the github api url
   var apiUrlPresent = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + API_KEY;
@@ -128,13 +137,13 @@ var getUserCity = function(city) {
           displayWeather(data);
         });
       } else {
-        alert("Error: " + response.statusText);
+        alert("Present Error: " + response.statusText);
       }
     })
     .catch(function(error) {
-      alert("Unable to connect to openWeather");
+      alert("Unable to connect to current openWeather");
     });
-// 0 8 16 24 32 39
+
     fetch(apiUrlFuture)
     .then(function(response) {
       // request was successful
@@ -143,36 +152,38 @@ var getUserCity = function(city) {
           displayFuture(data);
         });
       } else {
-        alert("Error: " + response.statusText);
+        alert("Future Error: " + response.statusText);
       }
     })
     .catch(function(error) {
-      alert("Unable to connect to openWeather");
+      alert("Unable to connect to future openWeather");
     });
 };
 
 $("form").submit(function ( event ) {
   event.preventDefault();
   var userCity = $( "input" ).first().val();
-  if (userCity) {
-    searchHistory.push(userCity);
-    saveHistory(userCity);
-    loadHistory();
-    getUserCity(userCity);
 
+  if (userCity) {
+    saveHistory(userCity);
+    getUserCity(userCity);
+    loadHistory();
   } else {
     alert("Please enter a city");
   }  
 });
 
 $("#search-history").on("click", function(event){
-  event.preventDefault();
   var userCity = event.target.getAttribute("data-city");
-
-  searchHistory.push(userCity);
-  getUserCity(userCity);
   saveHistory(userCity);
+  getUserCity(userCity);
   loadHistory();
 });
 
-loadHistory();
+var start = function () {
+  loadHistory();
+  if(searchHistory) {
+    getUserCity(searchHistory[0]);
+  }
+};
+start();
