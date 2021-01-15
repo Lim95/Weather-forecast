@@ -54,34 +54,6 @@ var getDate = function(userCityTime, offset) {
   return result;
 };
 
-var displayUV = function (lat, lon) {
-  var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + API_KEY;
-  fetch(apiUrl)
-    .then(function(response) {
-      if (response.ok) {
-        response.json().then(function(data) {
-          $("#city-uv").text(data.value);
-          var iUV = parseInt(data.value);
-          $("#city-uv").css({ padding : "10px" });
-          $("#city-uv").css('color','white');
-          if (iUV <= 2) {
-            $("#city-uv").css('background-color', 'green');            
-          }
-          else if (iUV <= 5) {
-            $("#city-uv").css('background-color', 'yellow');
-          }
-          else {
-            $("#city-uv").css('background-color', 'red');
-          }
-        });
-      } else {
-        alert("UV Error: " + response.statusText);
-      }
-    })
-    .catch(function(error) {
-      alert("Unable to connect to UV openWeather");
-    });    
-};
 
 var displayIcon = function(iconID){
   var iconUrl = "http://openweathermap.org/img/w/" + iconID + ".png";
@@ -102,7 +74,6 @@ var displayWeather = function(data) {
   $("#city-date").text("("+cityDate+")");
   $("#city-name").text(cityName);
   displayIcon(data.weather[0].icon);
-  displayUV(data.coord.lat,data.coord.lon);
 };
 
 var displayFuture = function (data) {
@@ -127,7 +98,6 @@ var getUserCity = function(city) {
   // format the github api url
   var apiUrlPresent = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + API_KEY;
   var apiUrlFuture = "https://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&appid="+API_KEY;
-
   // make a get request to url
   fetch(apiUrlPresent)
     .then(function(response) {
@@ -135,7 +105,12 @@ var getUserCity = function(city) {
       if (response.ok) {
         response.json().then(function(data) {
           displayWeather(data);
+          var lat, lon;
+          lat = data.coord.lat;
+          lon = data.coord.lon;
+          localStorage.setItem("latlon", JSON.stringify([lat, lon]));
         });
+
       } else {
         alert("Present Error: " + response.statusText);
       }
@@ -143,6 +118,33 @@ var getUserCity = function(city) {
     .catch(function(error) {
       alert("Unable to connect to current openWeather");
     });
+    var latlon = JSON.parse(localStorage.getItem("latlon"));
+var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + latlon[0] + "&lon=" + latlon[1] + "&appid=" + API_KEY;
+  fetch(apiUrl)
+    .then(function(response) {
+      if (response.ok) {
+        response.json().then(function(data) {
+          $("#city-uv").text(data.value);
+          var iUV = parseInt(data.value);
+          $("#city-uv").css({ padding : "10px" });
+          $("#city-uv").css('color','white');
+          if (iUV <= 2) {
+            $("#city-uv").css('background-color', 'green');            
+          }
+          else if (iUV <= 5) {
+            $("#city-uv").css('background-color', 'yellow');
+          }
+          else {
+            $("#city-uv").css('background-color', 'red');
+          }
+        });
+      } else {
+        alert("UV Error: " + response.statusText);
+      }
+    })
+    .catch(function(error) {
+      alert("Unable to connect to UV openWeather");
+    });      
 
     fetch(apiUrlFuture)
     .then(function(response) {
