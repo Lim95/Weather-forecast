@@ -120,7 +120,7 @@ var getUserCity = function(city) {
       alert("Unable to connect to current openWeather");
     });
     var latlon = JSON.parse(localStorage.getItem("latlon"));
-var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + latlon[0] + "&lon=" + latlon[1] + "&appid=" + NEW_API;
+var apiUrl = "https://api.openweathermap.org/data/2.5/uvi?lat=" + latlon[0] + "&lon=" + latlon[1] + "&appid=" + NEW_API;
   fetch(apiUrl)
     .then(function(response) {
       if (response.ok) {
