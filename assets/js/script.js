@@ -1,6 +1,7 @@
 var historyList = document.querySelector("#search-history");
 var searchHistory = [];
 const API_KEY = "cb6420d0d0462b86d556422b020e86b4";
+const NEW_API = "0a8f0166fa365cff32e33d53b97a246c";
 var counterID = 0;
 
 var saveHistory = function (userCity) {
@@ -119,7 +120,7 @@ var getUserCity = function(city) {
       alert("Unable to connect to current openWeather");
     });
     var latlon = JSON.parse(localStorage.getItem("latlon"));
-var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + latlon[0] + "&lon=" + latlon[1] + "&appid=" + API_KEY;
+var apiUrl = "http://api.openweathermap.org/data/2.5/uvi?lat=" + latlon[0] + "&lon=" + latlon[1] + "&appid=" + NEW_API;
   fetch(apiUrl)
     .then(function(response) {
       if (response.ok) {
